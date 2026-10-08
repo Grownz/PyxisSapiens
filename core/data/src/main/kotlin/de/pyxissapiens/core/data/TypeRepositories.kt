@@ -10,6 +10,9 @@ import de.pyxissapiens.core.domain.measure.MagnetometerCalibration
 import de.pyxissapiens.core.domain.measure.TiltCalibration
 import de.pyxissapiens.core.domain.model.DataType
 import de.pyxissapiens.core.domain.model.RockUnit
+import de.pyxissapiens.core.geology.math.Vector3
+import de.pyxissapiens.core.ports.MagCalibration
+import de.pyxissapiens.core.ports.MagCalibrationProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
@@ -40,7 +43,15 @@ class UnitRepository @Inject constructor(private val db: PyxisDatabase) {
 @Singleton
 class CalibrationRepository @Inject constructor(
     @ApplicationContext context: Context,
-) {
+) : MagCalibrationProvider {
+
+    override fun magnetometerCalibration(): MagCalibration? = magnetometer()?.let {
+        MagCalibration(
+            offset = Vector3(it.offsetX, it.offsetY, it.offsetZ),
+            scale = Vector3(it.scaleX, it.scaleY, it.scaleZ),
+        )
+    }
+
     private val prefs = context.getSharedPreferences("pyxis_calibration", Context.MODE_PRIVATE)
     private val json = Json { ignoreUnknownKeys = true }
     private val deviceKey = (Build.FINGERPRINT ?: Build.MODEL).replace(Regex("[^A-Za-z0-9]"), "_")

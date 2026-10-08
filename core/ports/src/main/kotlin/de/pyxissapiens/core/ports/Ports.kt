@@ -1,5 +1,6 @@
 package de.pyxissapiens.core.ports
 
+import de.pyxissapiens.core.geology.math.Vector3
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -45,4 +46,12 @@ interface LocationPort {
 interface GeomagneticPort {
     data class Field(val declinationDeg: Double, val inclinationDeg: Double, val totalFieldMicroTesla: Double)
     fun fieldAt(latitude: Double, longitude: Double, altitudeMeters: Double, epochMillis: Long): Field
+}
+
+/** Hard/soft-iron correction to apply to the raw magnetometer before heading fusion. */
+data class MagCalibration(val offset: Vector3, val scale: Vector3)
+
+/** Supplies the current magnetometer calibration to the sensor layer. */
+interface MagCalibrationProvider {
+    fun magnetometerCalibration(): MagCalibration?
 }
