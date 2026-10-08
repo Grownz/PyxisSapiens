@@ -20,5 +20,6 @@ object DatabaseModule {
         Room.databaseBuilder(context, PyxisDatabase::class.java, "pyxis.db")
             // TODO(sqlcipher): add .openHelperFactory(SupportOpenHelperFactory(passphrase))
             // where the passphrase is derived from a key held in the Android Keystore.
+            .addMigrations(PyxisDatabase.MIGRATION_1_2)
             .build()
 }

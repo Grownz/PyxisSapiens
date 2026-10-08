@@ -16,6 +16,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/07_Messkern.md`](docs/07_Messkern.md) | WMM2025, Messpipeline, Sensoranbindung, Persistenz, Mess-UI, Verifikation |
 | [`docs/08_Stereonet-Auswertung.md`](docs/08_Stereonet-Auswertung.md) | Projektionen, Statistik, Dichte (Kamb/Fisher), interaktive Auswertung, SVG/PNG-Export |
 | [`docs/09_Export-Import.md`](docs/09_Export-Import.md) | CSV/GeoJSON/KML/KMZ/PDF/Archiv, Verschlüsselung, Import-Mapping, Share-Sheet |
+| [`docs/10_Karte-Tracking.md`](docs/10_Karte-Tracking.md) | MapLibre, Linework, Tracking/GPX, Standort, MBTiles-Import, DB-Migration |
 
 ## Festgelegte Entscheidungen
 
