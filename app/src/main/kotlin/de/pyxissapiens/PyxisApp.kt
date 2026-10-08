@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import de.pyxissapiens.core.ui.gallery.DesignGallery
 import de.pyxissapiens.feature.compass.CompassRoute
+import de.pyxissapiens.feature.export.ExportRoute
 import de.pyxissapiens.feature.map.MapRoute
 import de.pyxissapiens.feature.measurements.MeasurementsRoute
 import de.pyxissapiens.feature.settings.SettingsRoute
@@ -84,6 +85,12 @@ fun PyxisApp() {
                 Column(Modifier.fillMaxSize().padding(16.dp)) {
                     SettingsRoute(Modifier.weight(1f))
                     Button(
+                        onClick = { navController.navigate("export") },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Export / Import")
+                    }
+                    Button(
                         onClick = { navController.navigate("gallery") },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
@@ -92,6 +99,7 @@ fun PyxisApp() {
                 }
             }
             composable("gallery") { DesignGallery() }
+            composable("export") { ExportRoute() }
         }
     }
 }
