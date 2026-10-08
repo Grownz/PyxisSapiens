@@ -3,12 +3,11 @@
 Geologenkompass für Android mit Datenverwaltung, -auswertung, -darstellung und -verknüpfung.
 Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, Gutachter und Behörden.
 
-[![CI](https://github.com/OWNER/PyxisSapiens/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/PyxisSapiens/actions/workflows/ci.yml)
+[![CI](https://github.com/Grownz/PyxisSapiens/actions/workflows/ci.yml/badge.svg)](https://github.com/Grownz/PyxisSapiens/actions/workflows/ci.yml)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026)-3DDC84.svg)](#)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3-7F52FF.svg)](#)
 
-> Hinweis: `OWNER` in den Badges/Links durch den GitHub-Nutzer/-Org ersetzen (siehe [`docs/17_GitHub-Setup.md`](docs/17_GitHub-Setup.md)).
 
 ## Dokumentation
 

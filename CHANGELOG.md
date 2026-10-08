@@ -41,5 +41,5 @@ Initial scaffold and vertical slices covering the roadmap R1–R4.
 - **Release polish**: R8 release build with signing placeholder, adaptive vector launcher icon,
   Robolectric tests and an i18n scaffold (DE/EN app chrome).
 
-[Unreleased]: https://github.com/OWNER/PyxisSapiens/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/OWNER/PyxisSapiens/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Grownz/PyxisSapiens/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Grownz/PyxisSapiens/releases/tag/v0.1.0

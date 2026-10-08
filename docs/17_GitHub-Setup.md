@@ -2,7 +2,10 @@
 
 **Stand:** Oktober 2026
 **Ziel:** Dieses lokale Git-Repository (`main`) als öffentliches GitHub-Repository
-**PyxisSapiens** veröffentlichen.
+**Grownz/PyxisSapiens** veröffentlichen.
+
+> Die Platzhalter (`OWNER`) sind bereits durch **Grownz** ersetzt; Branch ist `main`, Remote wird
+> unten gesetzt.
 
 > Das Repository ist bereits vorbereitet: Branch `main`, `.gitignore`/`.gitattributes`,
 > GPLv3-Lizenz, CI-Workflow, Community-Dateien. Es fehlt nur noch das Anlegen des Remote und der Push.
@@ -23,24 +26,24 @@ gh repo create PyxisSapiens --public --source . --remote origin --push
 ## 2. Remote setzen und pushen (falls nicht via `gh`)
 
 ```powershell
-# <OWNER> durch deinen GitHub-Nutzer/deine Organisation ersetzen
-git remote add origin https://github.com/<OWNER>/PyxisSapiens.git
+```powershell
+git remote add origin https://github.com/Grownz/PyxisSapiens.git
 git push -u origin main
 ```
 
-## 3. Platzhalter ersetzen
+## 3. Platzhalter
 
-`OWNER` an folgenden Stellen durch den echten GitHub-Nutzer/-Org ersetzen:
+Die `OWNER`-Platzhalter wurden bereits durch **Grownz** ersetzt in:
 
-- `README.md` – Badges und der Hinweis darunter
+- `README.md` – Badges
 - `CHANGELOG.md` – Vergleichs-/Release-Links
 - `.github/ISSUE_TEMPLATE/config.yml` – Dokumentations-/Security-Links
-- `.github/CODEOWNERS` – `@OWNER`
+- `.github/CODEOWNERS` – `@Grownz`
 
-Schnellprüfung:
+Schnellprüfung (ignoriert das Wort „CODEOWNERS"):
 
 ```powershell
-git grep -n "OWNER"
+git grep -n "github.com/OWNER"
 ```
 
 ## 4. CI und Schutz (optional, empfohlen)
