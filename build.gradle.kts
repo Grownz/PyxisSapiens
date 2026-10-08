@@ -2,7 +2,7 @@ buildscript {
     dependencies {
         // AGP 9 ships built-in Kotlin support and pins the Kotlin Gradle Plugin (KGP)
         // transitively. Raise it explicitly to the version chosen for this project.
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.20")
         classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.12")
     }
 }
