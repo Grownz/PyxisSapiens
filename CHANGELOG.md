@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shapefile/GPX import, WMS parameter form
 - Complementary gyro filter for heading smoothing
 
-## [0.1.0] - 2026-10
+## [0.1.0] - 2026-10-09
 
 Initial scaffold and vertical slices covering the roadmap R1–R4.
 
