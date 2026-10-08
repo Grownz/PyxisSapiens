@@ -30,8 +30,15 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platforms;android-37" "build-tools;36.0.0" "platform-tools"
+          set +e
+          SDKMANAGER="${ANDROID_SDK_ROOT:-$ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKMANAGER" ] || SDKMANAGER="$(command -v sdkmanager)"
+          echo "Using sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1
+          "$SDKMANAGER" "platform-tools" > /dev/null 2>&1
+          "$SDKMANAGER" "platforms;android-37" > /dev/null 2>&1
+          "$SDKMANAGER" "build-tools;36.0.0" > /dev/null 2>&1
+          echo "Installed SDK packages (AGP will fetch anything still missing)."
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
