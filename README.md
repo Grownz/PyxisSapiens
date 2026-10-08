@@ -14,6 +14,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/05_Scaffold-Status.md`](docs/05_Scaffold-Status.md) | Umgesetztes Gradle-Multimodul-Gerüst, Toolchain-Versionen, Build-Verifikation |
 | [`docs/06_Design-System.md`](docs/06_Design-System.md) | Tokens, JetBrains-Mono-Typografie, Geologie-Icons, Komponenten-Inventar, Galerie |
 | [`docs/07_Messkern.md`](docs/07_Messkern.md) | WMM2025, Messpipeline, Sensoranbindung, Persistenz, Mess-UI, Verifikation |
+| [`docs/08_Stereonet-Auswertung.md`](docs/08_Stereonet-Auswertung.md) | Projektionen, Statistik, Dichte (Kamb/Fisher), interaktive Auswertung, SVG/PNG-Export |
 
 ## Festgelegte Entscheidungen
 
