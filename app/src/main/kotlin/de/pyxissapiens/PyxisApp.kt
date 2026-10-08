@@ -1,5 +1,8 @@
 package de.pyxissapiens
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -7,6 +10,7 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import de.pyxissapiens.core.ui.gallery.DesignGallery
 import de.pyxissapiens.feature.compass.CompassRoute
 import de.pyxissapiens.feature.map.MapRoute
 import de.pyxissapiens.feature.projects.ProjectsRoute
@@ -74,7 +80,18 @@ fun PyxisApp() {
             composable("data") { ProjectsRoute() }
             composable("map") { MapRoute() }
             composable("analysis") { StereonetRoute() }
-            composable("more") { SettingsRoute() }
+            composable("more") {
+                Column(Modifier.fillMaxSize().padding(16.dp)) {
+                    SettingsRoute(Modifier.weight(1f))
+                    Button(
+                        onClick = { navController.navigate("gallery") },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Design-Galerie öffnen")
+                    }
+                }
+            }
+            composable("gallery") { DesignGallery() }
         }
     }
 }

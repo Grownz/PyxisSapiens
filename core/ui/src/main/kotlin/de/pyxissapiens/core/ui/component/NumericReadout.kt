@@ -9,12 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 
 /**
  * Large tabular numeric readout for a measured value (docs/04 §2.3).
- * Monospace digits prevent jitter while the value changes live.
+ * The theme's display styles use JetBrains Mono, so digits do not jitter while changing.
  */
 @Composable
 fun NumericReadout(
@@ -32,7 +31,7 @@ fun NumericReadout(
         Row(verticalAlignment = Alignment.Bottom) {
             Text(
                 text = value,
-                style = MaterialTheme.typography.displaySmall.copy(fontFamily = FontFamily.Monospace),
+                style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
             if (unit != null) {

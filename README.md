@@ -12,6 +12,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/03_Technische-Architektur.md`](docs/03_Technische-Architektur.md) | Module, Schichten, Messpipeline, Persistenz/Verschlüsselung, Auswertungs-Engine, Karte, CI |
 | [`docs/04_UI-UX-Konzept.md`](docs/04_UI-UX-Konzept.md) | Design-System, Navigation, Messablauf, Screens, Feldtauglichkeit, Accessibility |
 | [`docs/05_Scaffold-Status.md`](docs/05_Scaffold-Status.md) | Umgesetztes Gradle-Multimodul-Gerüst, Toolchain-Versionen, Build-Verifikation |
+| [`docs/06_Design-System.md`](docs/06_Design-System.md) | Tokens, JetBrains-Mono-Typografie, Geologie-Icons, Komponenten-Inventar, Galerie |
 
 ## Festgelegte Entscheidungen
 
