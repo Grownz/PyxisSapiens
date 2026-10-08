@@ -134,6 +134,18 @@ fun MapRoute(
         )
     }
 
+    // External geological map overlay (XYZ or WMS raster).
+    LaunchedEffect(styleReady, state.geologyUrl, state.geologyEnabled) {
+        val style = mapRef.value?.style ?: return@LaunchedEffect
+        style.getLayer("geology-layer")?.let { style.removeLayer(it) }
+        style.getSource("geology")?.let { style.removeSource(it) }
+        val url = state.geologyUrl ?: return@LaunchedEffect
+        if (!state.geologyEnabled) return@LaunchedEffect
+        val tiles = if (url.contains("{z}")) url else "$url&bbox={bbox-epsg-3857}"
+        style.addSource(RasterSource("geology", TileSet("2.1.0", tiles), 256))
+        style.addLayer(RasterLayer("geology-layer", "geology").withProperties(PropertyFactory.rasterOpacity(0.6f)))
+    }
+
     LaunchedEffect(styleReady, shownMeasurements, state.lineworks, state.tracks, state.draftPoints, state.showLinework, state.showTracks) {
         val style = mapRef.value?.style ?: return@LaunchedEffect
         (style.getSource("measurements") as? GeoJsonSource)?.setGeoJson(measurementsGeoJson(shownMeasurements))
@@ -160,6 +172,11 @@ fun MapRoute(
                 Button(onClick = { if (state.tracking) viewModel.stopTracking() else viewModel.startTracking() }) {
                     Text(if (state.tracking) "Stop" else "Tracking")
                 }
+                OutlinedButton(onClick = {
+                    context.startActivity(
+                        android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://macrostrat.org/map")),
+                    )
+                }) { Text("Geo-Web") }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FilterChip(selected = state.drawTool == DrawTool.LINE, onClick = { viewModel.setDrawTool(DrawTool.LINE) }, label = { Text("Linie") })

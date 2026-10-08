@@ -21,6 +21,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/12_Kalibrierung-Datenpflege.md`](docs/12_Kalibrierung-Datenpflege.md) | Kalibrier-Assistent, Datentypen/Einheiten, manuelle Eingabe, Filter |
 | [`docs/13_Karte-Tracking-Nachzug.md`](docs/13_Karte-Tracking-Nachzug.md) | Offline-MBTiles-Rendering, Foreground-Tracking, Linework-Bearbeitung, Basiskarten-Verwaltung |
 | [`docs/14_Genauigkeit-RohMag-Heading.md`](docs/14_Genauigkeit-RohMag-Heading.md) | Accel+Mag-Fusion mit Hard/Soft-Iron-Korrektur, Fallback Rotationsvektor |
+| [`docs/15_Verknuepfung.md`](docs/15_Verknuepfung.md) | Geologischer WMS/XYZ-Layer, Macrostrat-Lookup, GeoJSON/KML-Import, kein Backend |
 
 ## Festgelegte Entscheidungen
 

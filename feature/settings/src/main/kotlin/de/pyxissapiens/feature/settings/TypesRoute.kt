@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +37,8 @@ fun TypesRoute(
 ) {
     val types by viewModel.dataTypeList.collectAsStateWithLifecycle()
     val units by viewModel.unitList.collectAsStateWithLifecycle()
+    val lookup by viewModel.lookup.collectAsStateWithLifecycle()
+    val lookupMessage by viewModel.lookupMessage.collectAsStateWithLifecycle()
 
     var typeName by remember { mutableStateOf("") }
     var typeColor by remember { mutableStateOf("#FFB000") }
@@ -75,6 +78,25 @@ fun TypesRoute(
             OutlinedTextField(value = unitName, onValueChange = { unitName = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = unitCode, onValueChange = { unitCode = it }, label = { Text("Kürzel (optional)") }, modifier = Modifier.fillMaxWidth())
             Button(onClick = { viewModel.addUnit(unitName, unitCode); unitName = ""; unitCode = "" }) { Text("Einheit hinzufügen") }
+        }
+
+        SectionHeader("Stratigraphie (Macrostrat, optional)")
+        PyxisPanel {
+            Text(
+                "Online-Abfrage der Einheiten am aktuellen Standort (offline nicht verfügbar).",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Button(onClick = { viewModel.lookupStratigraphy() }) { Text("Am Standort abfragen") }
+            lookupMessage?.let {
+                Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+            }
+            lookup.forEach { name ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(name, modifier = Modifier.weight(1f))
+                    OutlinedButton(onClick = { viewModel.adoptUnit(name) }) { Text("Übernehmen") }
+                }
+            }
         }
     }
 }

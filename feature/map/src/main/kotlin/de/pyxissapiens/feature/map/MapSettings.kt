@@ -8,6 +8,8 @@ object MapSettings {
     private const val PREFS = "pyxis_map"
     private const val KEY_STYLE = "style_url"
     private const val KEY_ACTIVE = "active_mbtiles"
+    private const val KEY_GEOLOGY = "geology_url"
+    private const val KEY_GEOLOGY_ENABLED = "geology_enabled"
 
     fun styleUrl(context: Context): String =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_STYLE, null) ?: DEFAULT_STYLE_URL
@@ -22,6 +24,20 @@ object MapSettings {
 
     fun setActiveMbtiles(context: Context, path: String?) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY_ACTIVE, path).apply()
+    }
+
+    fun geologyUrl(context: Context): String? =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_GEOLOGY, null)
+
+    fun setGeologyUrl(context: Context, url: String?) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY_GEOLOGY, url?.ifBlank { null }).apply()
+    }
+
+    fun geologyEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_GEOLOGY_ENABLED, false)
+
+    fun setGeologyEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_GEOLOGY_ENABLED, enabled).apply()
     }
 
     fun mbtilesDir(context: Context): File = File(context.filesDir, "maps")

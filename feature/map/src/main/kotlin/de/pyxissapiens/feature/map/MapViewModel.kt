@@ -48,6 +48,16 @@ data class MapUiState(
     val showTracks: Boolean = true,
     val styleUrl: String = DEFAULT_STYLE_URL,
     val activeMbtiles: String? = null,
+    val geologyUrl: String? = null,
+    val geologyEnabled: Boolean = false,
+)
+
+private data class Base(
+    val style: String,
+    val active: String?,
+    val fix: GeoPoint?,
+    val geologyUrl: String?,
+    val geologyEnabled: Boolean,
 )
 
 @HiltViewModel
@@ -71,6 +81,8 @@ class MapViewModel @Inject constructor(
     private val showTracks = MutableStateFlow(true)
     private val styleUrl = MutableStateFlow(MapSettings.styleUrl(context))
     private val activeMbtiles = MutableStateFlow(MapSettings.activeMbtiles(context))
+    private val geologyUrl = MutableStateFlow(MapSettings.geologyUrl(context))
+    private val geologyEnabled = MutableStateFlow(MapSettings.geologyEnabled(context))
     private val message = MutableStateFlow<String?>(null)
 
     val messageState: StateFlow<String?> = message
@@ -83,20 +95,21 @@ class MapViewModel @Inject constructor(
 
     val state: StateFlow<MapUiState> = combine(
         dataFlow,
-        combine(styleUrl, activeMbtiles, lastFix) { s, a, f -> Triple(s, a, f) },
+        combine(styleUrl, activeMbtiles, lastFix, geologyUrl, geologyEnabled) { s, a, f, u, e -> Base(s, a, f, u, e) },
         combine(drawTool, draft, editingLinework) { t, d, e -> Triple(t, d, e) },
         combine(showLinework, showTracks) { a, b -> a to b },
-    ) { (m, l, t), (style, active, fix), (tool, draftPts, editingId), (showLw, showTr) ->
+    ) { (m, l, t), base, (tool, draftPts, editingId), (showLw, showTr) ->
         val activeTrack = t.firstOrNull { it.endedAt == null }
         MapUiState(
             measurements = m, lineworks = l, tracks = t,
-            lastFix = fix,
+            lastFix = base.fix,
             tracking = activeTrack != null,
             currentPoints = activeTrack?.points ?: emptyList(),
             distanceMeters = activeTrack?.distanceMeters ?: 0.0,
             drawTool = tool, draftPoints = draftPts, editingLineworkId = editingId,
             showLinework = showLw, showTracks = showTr,
-            styleUrl = style, activeMbtiles = active,
+            styleUrl = base.style, activeMbtiles = base.active,
+            geologyUrl = base.geologyUrl, geologyEnabled = base.geologyEnabled,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MapUiState())
 
@@ -114,6 +127,16 @@ class MapViewModel @Inject constructor(
     fun setActiveMbtiles(path: String?) {
         MapSettings.setActiveMbtiles(context, path)
         activeMbtiles.value = path
+    }
+
+    fun setGeologyUrl(url: String?) {
+        MapSettings.setGeologyUrl(context, url)
+        geologyUrl.value = MapSettings.geologyUrl(context)
+    }
+
+    fun setGeologyEnabled(enabled: Boolean) {
+        MapSettings.setGeologyEnabled(context, enabled)
+        geologyEnabled.value = enabled
     }
 
     fun listMbtiles(): List<File> = MapSettings.listMbtiles(context)
