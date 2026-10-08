@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.BarChart
@@ -30,7 +32,9 @@ import de.pyxissapiens.feature.compass.CompassRoute
 import de.pyxissapiens.feature.export.ExportRoute
 import de.pyxissapiens.feature.map.MapRoute
 import de.pyxissapiens.feature.measurements.MeasurementsRoute
+import de.pyxissapiens.feature.settings.CalibrationRoute
 import de.pyxissapiens.feature.settings.SettingsRoute
+import de.pyxissapiens.feature.settings.TypesRoute
 import de.pyxissapiens.feature.stereonet.StereonetRoute
 
 private data class BottomDestination(
@@ -82,24 +86,30 @@ fun PyxisApp() {
             composable("map") { MapRoute() }
             composable("analysis") { StereonetRoute() }
             composable("more") {
-                Column(Modifier.fillMaxSize().padding(16.dp)) {
-                    SettingsRoute(Modifier.weight(1f))
+                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
+                    SettingsRoute()
+                    Button(
+                        onClick = { navController.navigate("calibration") },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text("Kalibrierung") }
+                    Button(
+                        onClick = { navController.navigate("types") },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text("Datentypen & Einheiten") }
                     Button(
                         onClick = { navController.navigate("export") },
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text("Export / Import")
-                    }
+                    ) { Text("Export / Import") }
                     Button(
                         onClick = { navController.navigate("gallery") },
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text("Design-Galerie öffnen")
-                    }
+                    ) { Text("Design-Galerie öffnen") }
                 }
             }
             composable("gallery") { DesignGallery() }
             composable("export") { ExportRoute() }
+            composable("calibration") { CalibrationRoute() }
+            composable("types") { TypesRoute() }
         }
     }
 }

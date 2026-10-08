@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import de.pyxissapiens.core.data.DataTypeRepository
 import de.pyxissapiens.core.data.LineworkRepository
 import de.pyxissapiens.core.data.MeasurementRepository
 import de.pyxissapiens.core.data.TrackRepository
+import de.pyxissapiens.core.domain.model.DataType
 import de.pyxissapiens.core.domain.model.GeoPoint
 import de.pyxissapiens.core.domain.model.Linework
 import de.pyxissapiens.core.domain.model.LineworkKind
@@ -58,7 +60,11 @@ class MapViewModel @Inject constructor(
     private val lineworks: LineworkRepository,
     private val tracks: TrackRepository,
     private val location: LocationPort,
+    private val dataTypes: DataTypeRepository,
 ) : ViewModel() {
+
+    val dataTypeList: StateFlow<List<DataType>> =
+        dataTypes.observeAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val styleUrl = MutableStateFlow(DEFAULT_STYLE_URL)
     private val lastFix = MutableStateFlow<GeoPoint?>(null)

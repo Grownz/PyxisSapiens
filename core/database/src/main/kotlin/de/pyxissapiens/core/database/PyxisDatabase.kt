@@ -4,18 +4,22 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import de.pyxissapiens.core.database.dao.DataTypeDao
 import de.pyxissapiens.core.database.dao.LineworkDao
 import de.pyxissapiens.core.database.dao.MeasurementDao
 import de.pyxissapiens.core.database.dao.MeasurementHistoryDao
 import de.pyxissapiens.core.database.dao.ProjectDao
 import de.pyxissapiens.core.database.dao.SiteDao
 import de.pyxissapiens.core.database.dao.TrackDao
+import de.pyxissapiens.core.database.dao.UnitDao
+import de.pyxissapiens.core.database.entity.DataTypeEntity
 import de.pyxissapiens.core.database.entity.LineworkEntity
 import de.pyxissapiens.core.database.entity.MeasurementEntity
 import de.pyxissapiens.core.database.entity.MeasurementHistoryEntity
 import de.pyxissapiens.core.database.entity.ProjectEntity
 import de.pyxissapiens.core.database.entity.SiteEntity
 import de.pyxissapiens.core.database.entity.TrackEntity
+import de.pyxissapiens.core.database.entity.UnitEntity
 
 @Database(
     entities = [
@@ -25,8 +29,10 @@ import de.pyxissapiens.core.database.entity.TrackEntity
         MeasurementHistoryEntity::class,
         LineworkEntity::class,
         TrackEntity::class,
+        DataTypeEntity::class,
+        UnitEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class PyxisDatabase : RoomDatabase() {
@@ -36,6 +42,8 @@ abstract class PyxisDatabase : RoomDatabase() {
     abstract fun measurementHistoryDao(): MeasurementHistoryDao
     abstract fun lineworkDao(): LineworkDao
     abstract fun trackDao(): TrackDao
+    abstract fun dataTypeDao(): DataTypeDao
+    abstract fun unitDao(): UnitDao
 
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -56,5 +64,22 @@ abstract class PyxisDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_tracks_projectId` ON `tracks` (`projectId`)")
             }
         }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `data_types` (" +
+                        "`id` TEXT NOT NULL, `name` TEXT NOT NULL, `colorHex` TEXT NOT NULL, " +
+                        "`symbol` TEXT NOT NULL, PRIMARY KEY(`id`))",
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `units` (" +
+                        "`id` TEXT NOT NULL, `name` TEXT NOT NULL, `parentId` TEXT, `code` TEXT, " +
+                        "PRIMARY KEY(`id`))",
+                )
+            }
+        }
+
+        val ALL = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
     }
 }

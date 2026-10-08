@@ -28,7 +28,7 @@ object DatabaseModule {
 
         return Room.databaseBuilder(context, PyxisDatabase::class.java, "pyxis.db")
             .openHelperFactory(SupportOpenHelperFactory(passphrase))
-            .addMigrations(PyxisDatabase.MIGRATION_1_2)
+            .addMigrations(*PyxisDatabase.ALL)
             .build()
     }
 }

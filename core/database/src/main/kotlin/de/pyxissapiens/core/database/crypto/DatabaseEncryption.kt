@@ -5,7 +5,6 @@ import androidx.room.Room
 import de.pyxissapiens.core.database.PyxisDatabase
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import java.io.File
-
 /**
  * Establishes and maintains database encryption using Room on both sides (no low-level SQLCipher
  * API):
@@ -68,7 +67,7 @@ object DatabaseEncryption {
     private fun builder(context: Context, name: String, passphrase: ByteArray) =
         Room.databaseBuilder(context, PyxisDatabase::class.java, name)
             .openHelperFactory(factory(passphrase))
-            .addMigrations(PyxisDatabase.MIGRATION_1_2)
+            .addMigrations(*PyxisDatabase.ALL)
             .build()
 
     private fun migratePlaintext(context: Context, passphrase: ByteArray) {
@@ -111,5 +110,7 @@ object DatabaseEncryption {
         from.measurementHistoryDao().getAllOnce().forEach { to.measurementHistoryDao().append(it) }
         from.lineworkDao().getAllOnce().forEach { to.lineworkDao().upsert(it) }
         from.trackDao().getAllOnce().forEach { to.trackDao().upsert(it) }
+        from.dataTypeDao().getAllOnce().forEach { to.dataTypeDao().upsert(it) }
+        from.unitDao().getAllOnce().forEach { to.unitDao().upsert(it) }
     }
 }

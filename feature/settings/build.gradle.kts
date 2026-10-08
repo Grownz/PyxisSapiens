@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:database"))
+    implementation(project(":core:ports"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

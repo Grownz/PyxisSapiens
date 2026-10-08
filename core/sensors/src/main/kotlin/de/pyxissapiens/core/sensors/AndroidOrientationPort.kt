@@ -80,6 +80,23 @@ class AndroidOrientationPort @Inject constructor(
         awaitClose { sensorManager.unregisterListener(listener) }
     }
 
+    override fun magneticVectorMicroTesla(): Flow<Vector3> = callbackFlow {
+        val magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+        val listener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                if (event.sensor.type != Sensor.TYPE_MAGNETIC_FIELD) return
+                val v = event.values
+                trySend(Vector3(v[0].toDouble(), v[1].toDouble(), v[2].toDouble()))
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { lastAccuracy = accuracy }
+        }
+        if (magnetometer != null) {
+            sensorManager.registerListener(listener, magnetometer, SensorManager.SENSOR_DELAY_GAME)
+        }
+        awaitClose { sensorManager.unregisterListener(listener) }
+    }
+
     @Volatile
     private var lastAccuracy: Int? = null
 }

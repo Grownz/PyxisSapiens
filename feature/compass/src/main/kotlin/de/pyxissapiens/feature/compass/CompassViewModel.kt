@@ -3,10 +3,12 @@ package de.pyxissapiens.feature.compass
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.pyxissapiens.core.data.CalibrationRepository
 import de.pyxissapiens.core.data.DEFAULT_SITE_ID
 import de.pyxissapiens.core.data.MeasurementEditManager
 import de.pyxissapiens.core.data.ProjectRepository
 import de.pyxissapiens.core.data.SiteRepository
+import de.pyxissapiens.core.domain.measure.Calibration
 import de.pyxissapiens.core.domain.measure.ContactSurface
 import de.pyxissapiens.core.domain.measure.MeasurementEngine
 import de.pyxissapiens.core.domain.measure.OrientationSample
@@ -70,12 +72,15 @@ class CompassViewModel @Inject constructor(
     private val projects: ProjectRepository,
     private val sites: SiteRepository,
     private val editManager: MeasurementEditManager,
+    private val calibration: CalibrationRepository,
 ) : ViewModel() {
 
     private val buffer = ArrayDeque<DeviceFrame>()
     private var lastFix: GeoPoint? = null
     private var declination: Double? = null
     private var expectedMicroTesla: Double? = null
+    private val tiltCorrection = calibration.tilt()?.correction
+    private val magCalibration = calibration.magnetometer()
 
     private val _state = MutableStateFlow(CompassUiState())
     val state: StateFlow<CompassUiState> = _state.asStateFlow()
@@ -89,8 +94,9 @@ class CompassViewModel @Inject constructor(
             orientation.frames().collect { onFrame(it) }
         }
         viewModelScope.launch {
-            orientation.magneticFieldMicroTesla().collect { mt ->
-                _state.update { it.copy(microTesla = mt) }
+            orientation.magneticVectorMicroTesla().collect { raw ->
+                val magnitude = magCalibration?.let { Calibration.correctedMagnitude(it, raw) } ?: raw.length
+                _state.update { it.copy(microTesla = magnitude.toFloat()) }
             }
         }
         viewModelScope.launch {
@@ -193,9 +199,19 @@ class CompassViewModel @Inject constructor(
     }
 
     private fun onFrame(frame: DeviceFrame) {
+        val corrected = applyTilt(frame)
         while (buffer.size >= MAX_SAMPLES) buffer.removeFirst()
-        buffer.addLast(frame)
+        buffer.addLast(corrected)
         recomputeLive()
+    }
+
+    private fun applyTilt(frame: DeviceFrame): DeviceFrame {
+        val m = tiltCorrection ?: return frame
+        return frame.copy(
+            x = Calibration.applyMatrix(m, frame.x),
+            y = Calibration.applyMatrix(m, frame.y),
+            z = Calibration.applyMatrix(m, frame.z),
+        )
     }
 
     private fun recomputeLive() {

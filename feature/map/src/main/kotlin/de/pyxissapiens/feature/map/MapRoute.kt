@@ -56,8 +56,12 @@ fun MapRoute(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val message by viewModel.messageState.collectAsStateWithLifecycle()
+    val dataTypes by viewModel.dataTypeList.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    var selectedType by remember { mutableStateOf<String?>(null) }
+    val shownMeasurements = state.measurements.filter { selectedType == null || it.typeId == selectedType }
 
     var styleReady by remember { mutableStateOf(false) }
     val mapRef = remember { mutableStateOf<MapLibreMap?>(null) }
@@ -112,10 +116,10 @@ fun MapRoute(
     }
 
     // Data-driven overlays.
-    LaunchedEffect(styleReady, state.measurements, state.lineworks, state.tracks, state.draftPoints, state.showLinework, state.showTracks) {
+    LaunchedEffect(styleReady, shownMeasurements, state.lineworks, state.tracks, state.draftPoints, state.showLinework, state.showTracks) {
         val map = mapRef.value ?: return@LaunchedEffect
         val style = map.style ?: return@LaunchedEffect
-        (style.getSource("measurements") as? GeoJsonSource)?.setGeoJson(measurementsGeoJson(state.measurements))
+        (style.getSource("measurements") as? GeoJsonSource)?.setGeoJson(measurementsGeoJson(shownMeasurements))
         if (state.showLinework) {
             (style.getSource("linework") as? GeoJsonSource)?.setGeoJson(lineworkGeoJson(state.lineworks))
         } else {
@@ -156,6 +160,18 @@ fun MapRoute(
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FilterChip(selected = state.showLinework, onClick = { viewModel.toggleShowLinework() }, label = { Text("Linework") })
                 FilterChip(selected = state.showTracks, onClick = { viewModel.toggleShowTracks() }, label = { Text("Tracks") })
+            }
+            if (dataTypes.isNotEmpty()) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    FilterChip(selected = selectedType == null, onClick = { selectedType = null }, label = { Text("Alle Typen") })
+                    dataTypes.take(3).forEach { type ->
+                        FilterChip(
+                            selected = selectedType == type.id,
+                            onClick = { selectedType = if (selectedType == type.id) null else type.id },
+                            label = { Text(type.name) },
+                        )
+                    }
+                }
             }
         }
 

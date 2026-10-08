@@ -26,4 +26,7 @@ interface OrientationPort {
 
     /** Raw magnetic field magnitude in microtesla (used for interference detection). */
     fun magneticFieldMicroTesla(): Flow<Float>
+
+    /** Raw magnetometer vector in microtesla (used for hard/soft-iron calibration). */
+    fun magneticVectorMicroTesla(): Flow<Vector3>
 }
