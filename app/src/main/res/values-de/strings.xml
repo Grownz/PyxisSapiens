@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">PyxisSapiens</string>
+    <string name="nav_measure">Messen</string>
+    <string name="nav_data">Daten</string>
+    <string name="nav_map">Karte</string>
+    <string name="nav_analysis">Auswertung</string>
+    <string name="nav_more">Mehr</string>
+    <string name="action_calibration">Kalibrierung</string>
+    <string name="action_basemaps">Basiskarten</string>
+    <string name="action_types">Datentypen &amp; Einheiten</string>
+    <string name="action_export">Export / Import</string>
+    <string name="action_gallery">Design-Galerie öffnen</string>
 </resources>

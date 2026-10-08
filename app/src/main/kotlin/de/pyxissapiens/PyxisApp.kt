@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,8 +31,8 @@ import androidx.navigation.compose.rememberNavController
 import de.pyxissapiens.core.ui.gallery.DesignGallery
 import de.pyxissapiens.feature.compass.CompassRoute
 import de.pyxissapiens.feature.export.ExportRoute
-import de.pyxissapiens.feature.map.MapRoute
 import de.pyxissapiens.feature.map.BasemapsRoute
+import de.pyxissapiens.feature.map.MapRoute
 import de.pyxissapiens.feature.measurements.MeasurementsRoute
 import de.pyxissapiens.feature.settings.CalibrationRoute
 import de.pyxissapiens.feature.settings.SettingsRoute
@@ -40,16 +41,16 @@ import de.pyxissapiens.feature.stereonet.StereonetRoute
 
 private data class BottomDestination(
     val route: String,
-    val label: String,
+    val labelRes: Int,
     val icon: ImageVector,
 )
 
 private val bottomDestinations = listOf(
-    BottomDestination("compass", "Messen", Icons.Filled.Explore),
-    BottomDestination("data", "Daten", Icons.AutoMirrored.Filled.List),
-    BottomDestination("map", "Karte", Icons.Filled.Map),
-    BottomDestination("analysis", "Auswertung", Icons.Filled.BarChart),
-    BottomDestination("more", "Mehr", Icons.Filled.MoreHoriz),
+    BottomDestination("compass", R.string.nav_measure, Icons.Filled.Explore),
+    BottomDestination("data", R.string.nav_data, Icons.AutoMirrored.Filled.List),
+    BottomDestination("map", R.string.nav_map, Icons.Filled.Map),
+    BottomDestination("analysis", R.string.nav_analysis, Icons.Filled.BarChart),
+    BottomDestination("more", R.string.nav_more, Icons.Filled.MoreHoriz),
 )
 
 @Composable
@@ -61,6 +62,7 @@ fun PyxisApp() {
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = backStackEntry?.destination?.route
                 bottomDestinations.forEach { destination ->
+                    val label = stringResource(destination.labelRes)
                     NavigationBarItem(
                         selected = currentRoute == destination.route,
                         onClick = {
@@ -70,8 +72,8 @@ fun PyxisApp() {
                                 popUpTo("compass") { saveState = true }
                             }
                         },
-                        icon = { Icon(destination.icon, contentDescription = destination.label) },
-                        label = { Text(destination.label) },
+                        icon = { Icon(destination.icon, contentDescription = label) },
+                        label = { Text(label) },
                     )
                 }
             }
@@ -89,26 +91,11 @@ fun PyxisApp() {
             composable("more") {
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
                     SettingsRoute()
-                    Button(
-                        onClick = { navController.navigate("calibration") },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Kalibrierung") }
-                    Button(
-                        onClick = { navController.navigate("basemaps") },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Basiskarten") }
-                    Button(
-                        onClick = { navController.navigate("types") },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Datentypen & Einheiten") }
-                    Button(
-                        onClick = { navController.navigate("export") },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Export / Import") }
-                    Button(
-                        onClick = { navController.navigate("gallery") },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text("Design-Galerie öffnen") }
+                    MoreButton(R.string.action_calibration) { navController.navigate("calibration") }
+                    MoreButton(R.string.action_basemaps) { navController.navigate("basemaps") }
+                    MoreButton(R.string.action_types) { navController.navigate("types") }
+                    MoreButton(R.string.action_export) { navController.navigate("export") }
+                    MoreButton(R.string.action_gallery) { navController.navigate("gallery") }
                 }
             }
             composable("gallery") { DesignGallery() }
@@ -117,5 +104,12 @@ fun PyxisApp() {
             composable("types") { TypesRoute() }
             composable("basemaps") { BasemapsRoute() }
         }
+    }
+}
+
+@Composable
+private fun MoreButton(labelRes: Int, onClick: () -> Unit) {
+    Button(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(labelRes))
     }
 }
