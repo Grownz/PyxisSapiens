@@ -19,6 +19,9 @@ interface ProjectDao {
     @Query("SELECT * FROM projects WHERE id = :id")
     suspend fun getById(id: String): ProjectEntity?
 
+    @Query("SELECT COUNT(*) FROM projects")
+    suspend fun count(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(project: ProjectEntity)
 
@@ -42,6 +45,9 @@ interface SiteDao {
 interface MeasurementDao {
     @Query("SELECT * FROM measurements WHERE siteId = :siteId ORDER BY createdAt DESC")
     fun observeBySite(siteId: String): Flow<List<MeasurementEntity>>
+
+    @Query("SELECT * FROM measurements ORDER BY createdAt DESC")
+    fun observeAll(): Flow<List<MeasurementEntity>>
 
     @Query("SELECT * FROM measurements WHERE id = :id")
     suspend fun getById(id: String): MeasurementEntity?

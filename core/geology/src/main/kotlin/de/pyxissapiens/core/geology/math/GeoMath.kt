@@ -55,29 +55,30 @@ object GeoMath {
         ).normalized()
     }
 
-    /** Inverse of [planeToPole]. Returns (dipDirection, dip). */
+    /** Inverse of [planeToPole]. Returns (dipDirection, dip). The pole is taken as the upward normal. */
     fun poleToPlane(pole: Vector3): Pair<Double, Double> {
-        val n = pole.normalized()
+        val n0 = pole.normalized()
+        val n = if (n0.z < 0.0) n0 * -1.0 else n0
         val dip = Math.acos(n.z.coerceIn(-1.0, 1.0)) * DEG
-        val dipDir = norm360(atan2(-n.x, -n.y) * DEG)
+        val dipDir = if (dip < 1e-7) 0.0 else norm360(atan2(-n.x, -n.y) * DEG)
         return dipDir to dip
     }
 
-    /** Vector for a lineation given trend and plunge. */
+    /** Vector for a lineation given trend and plunge (points down-plunge, z = -sin(plunge)). */
     fun lineationToVector(trendDeg: Double, plungeDeg: Double): Vector3 {
         val t = trendDeg / DEG
         val p = plungeDeg / DEG
         return Vector3(
             x = sin(t) * cos(p),
             y = cos(t) * cos(p),
-            z = sin(p),
+            z = -sin(p),
         ).normalized()
     }
 
     /** Inverse of [lineationToVector]. Returns (trend, plunge). */
     fun vectorToLineation(v: Vector3): Pair<Double, Double> {
         val n = v.normalized()
-        val plunge = Math.asin(n.z.coerceIn(-1.0, 1.0)) * DEG
+        val plunge = Math.asin((-n.z).coerceIn(-1.0, 1.0)) * DEG
         val trend = norm360(atan2(n.x, n.y) * DEG)
         return trend to plunge
     }

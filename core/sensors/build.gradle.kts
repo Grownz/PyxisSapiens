@@ -22,6 +22,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core:ports"))
+    implementation(project(":core:wmm"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.coroutines.android)

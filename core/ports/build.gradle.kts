@@ -17,6 +17,7 @@ kotlin {
 
 dependencies {
     api(project(":core:common"))
+    api(project(":core:geology"))
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlin.test)
 }

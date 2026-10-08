@@ -28,7 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import de.pyxissapiens.core.ui.gallery.DesignGallery
 import de.pyxissapiens.feature.compass.CompassRoute
 import de.pyxissapiens.feature.map.MapRoute
-import de.pyxissapiens.feature.projects.ProjectsRoute
+import de.pyxissapiens.feature.measurements.MeasurementsRoute
 import de.pyxissapiens.feature.settings.SettingsRoute
 import de.pyxissapiens.feature.stereonet.StereonetRoute
 
@@ -77,7 +77,7 @@ fun PyxisApp() {
             modifier = Modifier.padding(innerPadding),
         ) {
             composable("compass") { CompassRoute() }
-            composable("data") { ProjectsRoute() }
+            composable("data") { MeasurementsRoute() }
             composable("map") { MapRoute() }
             composable("analysis") { StereonetRoute() }
             composable("more") {

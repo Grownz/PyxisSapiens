@@ -18,6 +18,8 @@ kotlin {
 
 dependencies {
     api(project(":core:common"))
+    api(project(":core:geology"))
+    api(project(":core:ports"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlin.test)
