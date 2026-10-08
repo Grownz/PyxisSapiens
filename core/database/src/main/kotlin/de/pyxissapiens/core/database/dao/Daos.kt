@@ -16,6 +16,9 @@ interface ProjectDao {
     @Query("SELECT * FROM projects ORDER BY updatedAt DESC")
     fun observeAll(): Flow<List<ProjectEntity>>
 
+    @Query("SELECT * FROM projects")
+    suspend fun getAllOnce(): List<ProjectEntity>
+
     @Query("SELECT * FROM projects WHERE id = :id")
     suspend fun getById(id: String): ProjectEntity?
 
@@ -27,6 +30,9 @@ interface ProjectDao {
 
     @Query("DELETE FROM projects WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("DELETE FROM projects")
+    suspend fun clear()
 }
 
 @Dao
@@ -34,11 +40,17 @@ interface SiteDao {
     @Query("SELECT * FROM sites WHERE projectId = :projectId ORDER BY name")
     fun observeByProject(projectId: String): Flow<List<SiteEntity>>
 
+    @Query("SELECT * FROM sites")
+    suspend fun getAllOnce(): List<SiteEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(site: SiteEntity)
 
     @Query("DELETE FROM sites WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("DELETE FROM sites")
+    suspend fun clear()
 }
 
 @Dao
@@ -48,6 +60,9 @@ interface MeasurementDao {
 
     @Query("SELECT * FROM measurements ORDER BY createdAt DESC")
     fun observeAll(): Flow<List<MeasurementEntity>>
+
+    @Query("SELECT * FROM measurements")
+    suspend fun getAllOnce(): List<MeasurementEntity>
 
     @Query("SELECT * FROM measurements WHERE id = :id")
     suspend fun getById(id: String): MeasurementEntity?
@@ -60,6 +75,9 @@ interface MeasurementDao {
 
     @Query("DELETE FROM measurements WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("DELETE FROM measurements")
+    suspend fun clear()
 }
 
 @Dao
@@ -69,4 +87,10 @@ interface MeasurementHistoryDao {
 
     @Query("SELECT * FROM measurement_history WHERE measurementId = :measurementId ORDER BY atEpochMillis")
     suspend fun historyOf(measurementId: String): List<MeasurementHistoryEntity>
+
+    @Query("SELECT * FROM measurement_history")
+    suspend fun getAllOnce(): List<MeasurementHistoryEntity>
+
+    @Query("DELETE FROM measurement_history")
+    suspend fun clear()
 }

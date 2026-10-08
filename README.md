@@ -17,6 +17,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/08_Stereonet-Auswertung.md`](docs/08_Stereonet-Auswertung.md) | Projektionen, Statistik, Dichte (Kamb/Fisher), interaktive Auswertung, SVG/PNG-Export |
 | [`docs/09_Export-Import.md`](docs/09_Export-Import.md) | CSV/GeoJSON/KML/KMZ/PDF/Archiv, Verschlüsselung, Import-Mapping, Share-Sheet |
 | [`docs/10_Karte-Tracking.md`](docs/10_Karte-Tracking.md) | MapLibre, Linework, Tracking/GPX, Standort, MBTiles-Import, DB-Migration |
+| [`docs/11_Datenhoheit.md`](docs/11_Datenhoheit.md) | SQLCipher+Keystore, Auto-Verschlüsselung/Re-Key, Historie/Undo, Validierung, Löschung |
 
 ## Festgelegte Entscheidungen
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.pyxissapiens.core.data.DEFAULT_SITE_ID
-import de.pyxissapiens.core.data.MeasurementRepository
+import de.pyxissapiens.core.data.MeasurementEditManager
 import de.pyxissapiens.core.data.ProjectRepository
 import de.pyxissapiens.core.data.SiteRepository
 import de.pyxissapiens.core.domain.measure.ContactSurface
@@ -69,7 +69,7 @@ class CompassViewModel @Inject constructor(
     private val location: LocationPort,
     private val projects: ProjectRepository,
     private val sites: SiteRepository,
-    private val measurements: MeasurementRepository,
+    private val editManager: MeasurementEditManager,
 ) : ViewModel() {
 
     private val buffer = ArrayDeque<DeviceFrame>()
@@ -187,7 +187,7 @@ class CompassViewModel @Inject constructor(
             updatedAt = now,
         )
         viewModelScope.launch {
-            measurements.add(measurement)
+            editManager.add(measurement)
             _state.update { it.copy(held = null, savedCount = it.savedCount + 1, statusMessage = "Gespeichert") }
         }
     }

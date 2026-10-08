@@ -8,6 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import de.pyxissapiens.core.database.PyxisDatabase
+import de.pyxissapiens.core.database.crypto.DatabaseEncryption
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import javax.inject.Singleton
 
 @Module
@@ -16,10 +18,17 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): PyxisDatabase =
-        Room.databaseBuilder(context, PyxisDatabase::class.java, "pyxis.db")
-            // TODO(sqlcipher): add .openHelperFactory(SupportOpenHelperFactory(passphrase))
-            // where the passphrase is derived from a key held in the Android Keystore.
+    fun provideDatabase(@ApplicationContext context: Context): PyxisDatabase {
+        // sqlcipher-android ships a native library that must be loaded before use.
+        System.loadLibrary("sqlcipher")
+
+        // Resolves the passphrase matching the current file (handles first-time encryption and
+        // transparent re-keying when the optional user passphrase changed).
+        val passphrase = DatabaseEncryption.resolvePassphrase(context)
+
+        return Room.databaseBuilder(context, PyxisDatabase::class.java, "pyxis.db")
+            .openHelperFactory(SupportOpenHelperFactory(passphrase))
             .addMigrations(PyxisDatabase.MIGRATION_1_2)
             .build()
+    }
 }
