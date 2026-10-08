@@ -3,6 +3,13 @@
 Geologenkompass für Android mit Datenverwaltung, -auswertung, -darstellung und -verknüpfung.
 Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, Gutachter und Behörden.
 
+[![CI](https://github.com/OWNER/PyxisSapiens/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/PyxisSapiens/actions/workflows/ci.yml)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026)-3DDC84.svg)](#)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3-7F52FF.svg)](#)
+
+> Hinweis: `OWNER` in den Badges/Links durch den GitHub-Nutzer/-Org ersetzen (siehe [`docs/17_GitHub-Setup.md`](docs/17_GitHub-Setup.md)).
+
 ## Dokumentation
 
 | Dokument | Inhalt |
@@ -23,6 +30,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/14_Genauigkeit-RohMag-Heading.md`](docs/14_Genauigkeit-RohMag-Heading.md) | Accel+Mag-Fusion mit Hard/Soft-Iron-Korrektur, Fallback Rotationsvektor |
 | [`docs/15_Verknuepfung.md`](docs/15_Verknuepfung.md) | Geologischer WMS/XYZ-Layer, Macrostrat-Lookup, GeoJSON/KML-Import, kein Backend |
 | [`docs/16_Release-Politur.md`](docs/16_Release-Politur.md) | R8-Release + Signing, App-Icon, Robolectric-Tests, i18n-Grundgerüst |
+| [`docs/17_GitHub-Setup.md`](docs/17_GitHub-Setup.md) | Repository anlegen, Remote/Push, Secrets-Hinweise, CI |
 
 ## Festgelegte Entscheidungen
 
@@ -43,3 +51,30 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | **R2** | Auswertung: Stereonet, Statistik, Rose/Histogramm, Hangstabilität |
 | **R3** | Karte, Offline-Basiskarten, Linework, GPS-Tracking |
 | **R4** | Verknüpfung/Interoperabilität/Erweiterbarkeit |
+
+## Build
+
+Voraussetzung: **JDK 17+** (Android-Studio-JBR genügt), Android SDK mit **Platform API 37** und
+**Build-Tools 36.0.0**. Gradle kommt über den Wrapper.
+
+```powershell
+$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
+.\gradlew.bat assembleDebug      # Debug-APK
+.\gradlew.bat test               # alle Unit-Tests (inkl. Robolectric)
+.\gradlew.bat lint               # Android Lint
+.\gradlew.bat assembleRelease    # R8-Release (Signing-Platzhalter)
+```
+
+Für echtes Release-Signing `keystore.properties.example` → `keystore.properties` kopieren und
+ausfüllen (git-ignoriert).
+
+## Beitragen
+
+Beiträge sind willkommen. Siehe [`CONTRIBUTING.md`](CONTRIBUTING.md) und den
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md). Sicherheitslücken bitte gemäß
+[`SECURITY.md`](SECURITY.md) privat melden. Änderungen: [`CHANGELOG.md`](CHANGELOG.md).
+
+## Lizenz
+
+GNU General Public License v3.0 — siehe [`LICENSE`](LICENSE).
+

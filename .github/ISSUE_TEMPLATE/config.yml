@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/OWNER/PyxisSapiens/tree/main/docs
+    about: Analysis, requirements, architecture and UI concept.
+  - name: Security report
+    url: https://github.com/OWNER/PyxisSapiens/security/advisories/new
+    about: Please report security vulnerabilities privately.
