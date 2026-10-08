@@ -94,4 +94,14 @@ object GeoMath {
         val d = a.normalized().dot(b.normalized()).coerceIn(-1.0, 1.0)
         return Math.acos(d) * DEG
     }
+
+    /** Great-circle distance in metres between two WGS84 coordinates (haversine). */
+    fun haversineMeters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371000.0
+        val dLat = (lat2 - lat1) / DEG
+        val dLon = (lon2 - lon1) / DEG
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+            cos(lat1 / DEG) * cos(lat2 / DEG) * sin(dLon / 2) * sin(dLon / 2)
+        return 2 * r * Math.asin(sqrt(a))
+    }
 }

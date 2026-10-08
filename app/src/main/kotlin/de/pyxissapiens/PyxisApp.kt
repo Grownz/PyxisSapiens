@@ -31,6 +31,7 @@ import de.pyxissapiens.core.ui.gallery.DesignGallery
 import de.pyxissapiens.feature.compass.CompassRoute
 import de.pyxissapiens.feature.export.ExportRoute
 import de.pyxissapiens.feature.map.MapRoute
+import de.pyxissapiens.feature.map.BasemapsRoute
 import de.pyxissapiens.feature.measurements.MeasurementsRoute
 import de.pyxissapiens.feature.settings.CalibrationRoute
 import de.pyxissapiens.feature.settings.SettingsRoute
@@ -93,6 +94,10 @@ fun PyxisApp() {
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text("Kalibrierung") }
                     Button(
+                        onClick = { navController.navigate("basemaps") },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text("Basiskarten") }
+                    Button(
                         onClick = { navController.navigate("types") },
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text("Datentypen & Einheiten") }
@@ -110,6 +115,7 @@ fun PyxisApp() {
             composable("export") { ExportRoute() }
             composable("calibration") { CalibrationRoute() }
             composable("types") { TypesRoute() }
+            composable("basemaps") { BasemapsRoute() }
         }
     }
 }

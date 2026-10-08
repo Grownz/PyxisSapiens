@@ -47,7 +47,11 @@ import org.maplibre.android.maps.Style
 import org.maplibre.android.style.layers.CircleLayer
 import org.maplibre.android.style.layers.LineLayer
 import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.layers.RasterLayer
 import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.android.style.sources.RasterSource
+import org.maplibre.android.style.sources.TileSet
+import java.io.File
 
 @Composable
 fun MapRoute(
@@ -66,17 +70,15 @@ fun MapRoute(
     var styleReady by remember { mutableStateOf(false) }
     val mapRef = remember { mutableStateOf<MapLibreMap?>(null) }
     val drawToolRef = remember { mutableStateOf(DrawTool.NONE) }
+    val tileServer = remember { mutableStateOf<MbtilesTileServer?>(null) }
     val mapView = remember { MapView(context).apply { onCreate(null) } }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) viewModel.refreshLocation()
     }
     LaunchedEffect(Unit) { permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) }
-
-    // Keep the click handler's draw-tool reference current.
     LaunchedEffect(state.drawTool) { drawToolRef.value = state.drawTool }
 
-    // Initialise MapLibre and the style.
     LaunchedEffect(Unit) {
         MapLibre.getInstance(context)
         mapView.getMapAsync { map ->
@@ -89,14 +91,11 @@ fun MapRoute(
                 if (drawToolRef.value != DrawTool.NONE) {
                     viewModel.addDraftPoint(GeoPoint(latLng.latitude, latLng.longitude, null, null))
                     true
-                } else {
-                    false
-                }
+                } else false
             }
         }
     }
 
-    // Lifecycle forwarding to the MapView.
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -112,21 +111,36 @@ fun MapRoute(
             lifecycleOwner.lifecycle.removeObserver(observer)
             mapView.onStop()
             mapView.onDestroy()
+            tileServer.value?.stop()
         }
     }
 
-    // Data-driven overlays.
-    LaunchedEffect(styleReady, shownMeasurements, state.lineworks, state.tracks, state.draftPoints, state.showLinework, state.showTracks) {
+    // Offline MBTiles basemap via a local tile server.
+    LaunchedEffect(styleReady, state.activeMbtiles) {
         val map = mapRef.value ?: return@LaunchedEffect
         val style = map.style ?: return@LaunchedEffect
+        style.getLayer("offline-layer")?.let { style.removeLayer(it) }
+        style.getSource("offline")?.let { style.removeSource(it) }
+        tileServer.value?.stop()
+        tileServer.value = null
+        val path = state.activeMbtiles ?: return@LaunchedEffect
+        val file = File(path)
+        if (!file.exists()) return@LaunchedEffect
+        val server = MbtilesTileServer(MbtilesSource(file)).also { it.start() }
+        tileServer.value = server
+        style.addSource(RasterSource("offline", TileSet("2.1.0", server.urlTemplate), 256))
+        style.addLayer(
+            RasterLayer("offline-layer", "offline").withProperties(PropertyFactory.rasterOpacity(0.95f)),
+        )
+    }
+
+    LaunchedEffect(styleReady, shownMeasurements, state.lineworks, state.tracks, state.draftPoints, state.showLinework, state.showTracks) {
+        val style = mapRef.value?.style ?: return@LaunchedEffect
         (style.getSource("measurements") as? GeoJsonSource)?.setGeoJson(measurementsGeoJson(shownMeasurements))
-        if (state.showLinework) {
-            (style.getSource("linework") as? GeoJsonSource)?.setGeoJson(lineworkGeoJson(state.lineworks))
-        } else {
-            (style.getSource("linework") as? GeoJsonSource)?.setGeoJson(emptyFeatureCollection())
-        }
-        val trackFeatures = if (state.showTracks) state.tracks else emptyList()
-        (style.getSource("tracks") as? GeoJsonSource)?.setGeoJson(tracksGeoJson(trackFeatures))
+        (style.getSource("linework") as? GeoJsonSource)?.setGeoJson(
+            if (state.showLinework) lineworkGeoJson(state.lineworks) else emptyFeatureCollection(),
+        )
+        (style.getSource("tracks") as? GeoJsonSource)?.setGeoJson(tracksGeoJson(if (state.showTracks) state.tracks else emptyList()))
         (style.getSource("draft") as? GeoJsonSource)?.setGeoJson(draftGeoJson(state.draftPoints))
     }
 
@@ -139,21 +153,20 @@ fun MapRoute(
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 OutlinedButton(onClick = {
-                    val fix = state.lastFix
-                    if (fix != null) mapRef.value?.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(LatLng(fix.latitude, fix.longitude), 15.0),
-                    )
+                    state.lastFix?.let { fix ->
+                        mapRef.value?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(fix.latitude, fix.longitude), 15.0))
+                    }
                 }) { Text("Standort") }
                 Button(onClick = { if (state.tracking) viewModel.stopTracking() else viewModel.startTracking() }) {
                     Text(if (state.tracking) "Stop" else "Tracking")
                 }
-                OutlinedButton(onClick = { viewModel.exportLastTrackGpx() }) { Text("GPX") }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FilterChip(selected = state.drawTool == DrawTool.LINE, onClick = { viewModel.setDrawTool(DrawTool.LINE) }, label = { Text("Linie") })
                 FilterChip(selected = state.drawTool == DrawTool.POLYGON, onClick = { viewModel.setDrawTool(DrawTool.POLYGON) }, label = { Text("Polygon") })
                 if (state.drawTool != DrawTool.NONE) {
                     Button(onClick = { viewModel.finishDraw() }) { Text("Fertig") }
+                    OutlinedButton(onClick = { viewModel.deleteLastDraftPoint() }) { Text("Punkt -") }
                     OutlinedButton(onClick = { viewModel.cancelDraw() }) { Text("Abbruch") }
                 }
             }
@@ -176,7 +189,7 @@ fun MapRoute(
         }
 
         Column(
-            Modifier.align(androidx.compose.ui.Alignment.BottomCenter).padding(8.dp),
+            Modifier.align(androidx.compose.ui.Alignment.BottomCenter).fillMaxWidth().padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             if (state.tracking) {
@@ -187,11 +200,17 @@ fun MapRoute(
                 )
             }
             if (state.drawTool != DrawTool.NONE) {
-                Text("Zeichnen: ${state.draftPoints.size} Punkte – auf die Karte tippen", style = MaterialTheme.typography.labelMedium)
+                val label = if (state.editingLineworkId != null) "Bearbeiten" else "Zeichnen"
+                Text("$label: ${state.draftPoints.size} Punkte – auf die Karte tippen", style = MaterialTheme.typography.labelMedium)
             }
-            message?.let {
-                Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary)
+            if (state.lineworks.isNotEmpty()) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    state.lineworks.take(2).forEach { lw ->
+                        OutlinedButton(onClick = { viewModel.editLinework(lw.id) }) { Text("${lw.kind.name} bearbeiten") }
+                    }
+                }
             }
+            message?.let { Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.tertiary) }
         }
     }
 }
@@ -210,30 +229,15 @@ private fun ensureLayers(style: Style) {
     }
     if (style.getSource("linework") == null) {
         style.addSource(GeoJsonSource("linework", emptyFeatureCollection()))
-        style.addLayer(
-            LineLayer("linework-layer", "linework").withProperties(
-                PropertyFactory.lineColor(AndroidColor.rgb(78, 161, 255)),
-                PropertyFactory.lineWidth(3f),
-            ),
-        )
+        style.addLayer(LineLayer("linework-layer", "linework").withProperties(PropertyFactory.lineColor(AndroidColor.rgb(78, 161, 255)), PropertyFactory.lineWidth(3f)))
     }
     if (style.getSource("tracks") == null) {
         style.addSource(GeoJsonSource("tracks", emptyFeatureCollection()))
-        style.addLayer(
-            LineLayer("tracks-layer", "tracks").withProperties(
-                PropertyFactory.lineColor(AndroidColor.rgb(55, 214, 122)),
-                PropertyFactory.lineWidth(3f),
-            ),
-        )
+        style.addLayer(LineLayer("tracks-layer", "tracks").withProperties(PropertyFactory.lineColor(AndroidColor.rgb(55, 214, 122)), PropertyFactory.lineWidth(3f)))
     }
     if (style.getSource("draft") == null) {
         style.addSource(GeoJsonSource("draft", emptyFeatureCollection()))
-        style.addLayer(
-            LineLayer("draft-layer", "draft").withProperties(
-                PropertyFactory.lineColor(AndroidColor.rgb(255, 92, 92)),
-                PropertyFactory.lineWidth(3f),
-            ),
-        )
+        style.addLayer(LineLayer("draft-layer", "draft").withProperties(PropertyFactory.lineColor(AndroidColor.rgb(255, 92, 92)), PropertyFactory.lineWidth(3f)))
     }
 }
 

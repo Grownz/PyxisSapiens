@@ -19,6 +19,7 @@ Offline-first, Open Source (GPLv3), zweisprachig DE/EN, ausgelegt für Profis, G
 | [`docs/10_Karte-Tracking.md`](docs/10_Karte-Tracking.md) | MapLibre, Linework, Tracking/GPX, Standort, MBTiles-Import, DB-Migration |
 | [`docs/11_Datenhoheit.md`](docs/11_Datenhoheit.md) | SQLCipher+Keystore, Auto-Verschlüsselung/Re-Key, Historie/Undo, Validierung, Löschung |
 | [`docs/12_Kalibrierung-Datenpflege.md`](docs/12_Kalibrierung-Datenpflege.md) | Kalibrier-Assistent, Datentypen/Einheiten, manuelle Eingabe, Filter |
+| [`docs/13_Karte-Tracking-Nachzug.md`](docs/13_Karte-Tracking-Nachzug.md) | Offline-MBTiles-Rendering, Foreground-Tracking, Linework-Bearbeitung, Basiskarten-Verwaltung |
 
 ## Festgelegte Entscheidungen
 
