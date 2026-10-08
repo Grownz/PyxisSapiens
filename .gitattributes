@@ -1,0 +1,7 @@
+# Normalize line endings; keep Unix scripts LF and Windows scripts CRLF.
+* text=auto
+*.sh text eol=lf
+gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.png binary

@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build, test and lint
+        run: ./gradlew --no-daemon assembleDebug testDebugUnitTest lint
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pyxissapiens-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: ignore
