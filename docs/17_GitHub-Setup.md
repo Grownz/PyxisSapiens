@@ -50,7 +50,11 @@ git grep -n "github.com/OWNER"
 
 - Der Workflow `.github/workflows/ci.yml` läuft bei Push/PR auf `main`:
   `assembleDebug`, `test` (inkl. Robolectric) und `lint`.
-- Optional: Branch-Schutz für `main` (Require PR, Require status checks → „build“).
+- **Branch-Schutz `main` (konfiguriert):**
+  - Änderungen nur über **Pull Requests**;
+  - erforderlicher Status-Check: **`build`**;
+  - erforderliche Approvals: **0** (Single-Maintainer);
+  - `enforce_admins` aus (Notfall-Bypass möglich).
 - Optional: Dependabot ist aktiv (`.github/dependabot.yml`) und öffnet wöchentliche Updates.
 
 ## 5. Secrets / Signing
