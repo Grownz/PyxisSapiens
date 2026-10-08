@@ -64,10 +64,22 @@ Do **not** commit `local.properties`, `keystore.properties`, keystores or any se
 
 ## Commit & pull requests
 
+- **`main` is protected:** changes are made through **pull requests**, and the `build` CI check
+  must pass before merging. Direct pushes to `main` are not part of the normal workflow.
 - Use clear, conventional commit messages (`feat:`, `fix:`, `docs:`, `test:`, `chore:`).
 - Keep PRs focused; describe **what** and **why**, and reference issues.
 - Update `CHANGELOG.md` and `docs/` when behaviour changes.
 - By contributing you agree that your contributions are licensed under **GPLv3**.
+
+Recommended flow:
+
+```bash
+git switch -c feat/my-change
+# ... make changes ...
+git commit -am "feat: my change"
+git push -u origin feat/my-change
+# open a pull request against main
+```
 
 ## Code of conduct
 
