@@ -38,7 +38,6 @@ import de.pyxissapiens.core.domain.model.LineworkKind
 import de.pyxissapiens.core.domain.model.Measurement
 import de.pyxissapiens.core.domain.model.MeasurementKind
 import de.pyxissapiens.core.domain.model.Track
-import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
@@ -80,7 +79,6 @@ fun MapRoute(
     LaunchedEffect(state.drawTool) { drawToolRef.value = state.drawTool }
 
     LaunchedEffect(Unit) {
-        MapLibre.getInstance(context)
         mapView.getMapAsync { map ->
             mapRef.value = map
             map.setStyle(Style.Builder().fromUri(state.styleUrl)) { style ->
@@ -107,6 +105,15 @@ fun MapRoute(
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
+        // The observer only receives future events; sync the MapView with the current state so it
+        // is started/resumed even if those events already fired before this composable appeared.
+        val currentState = lifecycleOwner.lifecycle.currentState
+        if (currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            mapView.onStart()
+            mapView.onResume()
+        } else if (currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            mapView.onStart()
+        }
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             mapView.onStop()
