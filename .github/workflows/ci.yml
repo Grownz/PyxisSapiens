@@ -47,7 +47,7 @@ jobs:
         run: ./gradlew --no-daemon assembleDebug test lint
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: pyxissapiens-debug-apk
           path: app/build/outputs/apk/debug/*.apk
