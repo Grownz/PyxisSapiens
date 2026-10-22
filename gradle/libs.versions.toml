@@ -19,7 +19,7 @@ room = "2.8.5"
 sqlcipher = "4.19.1"
 
 # Geo / Maps
-maplibre = "13.6.1"
+maplibre = "13.7.1"
 
 # Kotlin ecosystem
 kotlinxSerialization = "1.11.0"
